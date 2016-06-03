@@ -5,3 +5,6 @@ dev:
 
 docker:
 	docker build -t $(TARGET) .
+
+test:
+	nosetests
