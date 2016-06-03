@@ -14,5 +14,4 @@ setup(
     author_email='mail@koendercksen.com',
     url='http://github.com/KDercksen/pyci',
     packages=find_packages(exclude=['tests']),
-    test_suite='tests',
 )
