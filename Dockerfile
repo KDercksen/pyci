@@ -1,19 +1,17 @@
-FROM debian:latest
+FROM alpine:latest
 MAINTAINER Koen Dercksen <mail@koendercksen.com>
 
 USER root
 
 # Install everything needed to do Python CI
-RUN apt-get update && apt-get install -y \
-    build-essential \
+RUN apk add --update --no-cache \
+    bash \
+    build-base \
     git \
     python \
     python-dev \
-    python-pip \
     python3 \
-    python3-dev \
-    python3-pip \
-    virtualenvwrapper
+    python3-dev
 
 # Set up environment
 ENV UNAME pyci
@@ -22,17 +20,26 @@ ENV EDITOR vim
 ENV HOME /home/$UNAME
 ENV WORKON_HOME $HOME/venvs
 
-# Set up user and server
-RUN useradd -m -s /bin/bash -N $UNAME
-COPY . /pyci
-WORKDIR /pyci
-RUN python3 setup.py install
-EXPOSE 9999
-WORKDIR /home/$UNAME
-RUN rm -r /pyci
+# Set up user
+RUN adduser -D -h $HOME -s $SHELL $UNAME
+
+# Set up pyci
+WORKDIR $HOME/pyci
+COPY . pyci
+WORKDIR pyci
+RUN pip3 install -r requirements.txt && python3 setup.py install
+WORKDIR $HOME
+RUN rm -r pyci
+
+# Set up virtualenvwrapper
+RUN git clone https://bitbucket.org/virtualenvwrapper/virtualenvwrapper.git
+WORKDIR virtualenvwrapper
+RUN pip3 install -r requirements.txt && python3 setup.py install
+WORKDIR $HOME
+RUN rm -r virtualenvwrapper
 
 # Configure startup
-WORKDIR /home/$UNAME
 USER $UNAME
 
+EXPOSE 9999
 ENTRYPOINT ["python3", "-m", "pyci.server"]
