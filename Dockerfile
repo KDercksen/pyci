@@ -24,7 +24,7 @@ ENV WORKON_HOME $HOME/venvs
 RUN adduser -D -h $HOME -s $SHELL $UNAME
 
 # Set up pyci
-WORKDIR $HOME/pyci
+WORKDIR $HOME
 COPY . pyci
 WORKDIR pyci
 RUN pip3 install -r requirements.txt && python3 setup.py install

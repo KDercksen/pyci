@@ -7,4 +7,4 @@ import logging
 __version__ = '0.1'
 
 
-logging.basicConfig(filename='log/pyci.log', level=logging.DEBUG)
+logging.basicConfig(filename='/var/log/pyci.log', level=logging.DEBUG)
